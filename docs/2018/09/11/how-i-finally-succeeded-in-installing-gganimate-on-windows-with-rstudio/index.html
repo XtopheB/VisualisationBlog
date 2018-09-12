@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.48" />
+
+
+<title>How I finally succeeded in installing *gganimate* on Windows with Rstudio - Xtophe&#39;s blog</title>
+<meta property="og:title" content="How I finally succeeded in installing *gganimate* on Windows with Rstudio - Xtophe&#39;s blog">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/Xtophe2018.JPG"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="http://data.visualisation.free.fr/">DataVisualisation Site</a></li>
+    
+    <li><a href="https://twitter.com/Xtophe_Bontemps">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">How I finally succeeded in installing *gganimate* on Windows with Rstudio</h1>
+
+    
+    <span class="article-date">2018/09/11</span>
+    
+
+    <div class="article-content">
+      <p><em>A post from <a href="http://data.visualisation.free.fr">data.visualisation.free.fr</a></em></p>
+<blockquote>
+<p>Installing <em>gganimate</em>, a piece of cake…</p>
+</blockquote>
+<p><code>gganimate</code> is an appealing package I really wanted to try, but for that I needed first to install it on my windows machine. That was not easy but here is the successful (but time consuming) story of this installation. <code>gganimate</code> is <strong>NOT</strong> available on CRAN yet but can be installed, as many developers’ packages using <em>devtools</em> pointing to the GitHub repository of <a href="https://github.com/thomasp85">thomasp85</a> (alias Thomas Lin Pedersen). For the occasion, I first updated R to the current (3.5.1) version. The instruction for installing <code>gganimate</code> as read on thomasp85’s <a href="https://github.com/thomasp85/gganimate#installation">readme.md</a> is:</p>
+<pre class="r"><code># install.packages(&#39;devtools&#39;)
+devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>My post would have been short and uninteresting if that simple instruction was successful. After several dependency package installation, I get the following quite unambiguous message:</p>
+<pre class="r"><code>* removing &#39;C:/Users/Xtophe/Documents/R/win-library/3.5/gganimate&#39;
+In R CMD INSTALL
+&#39;Installation failed: Command failed (1)&#39;</code></pre>
+<p>I will go directly to the solution, avoiding the reader to follow my time-consuming, nerve-streching tribulations on the web. The one thing that was missing was <code>Rtools</code>, which is not an R package but a utility required to build R packages, and <code>gganimate</code> needs that.</p>
+<blockquote>
+<p><em>gganimate</em> needs <em>Rtools</em> for its installation…</p>
+</blockquote>
+<p>Since <code>Rtools</code> is <strong>NOT</strong> an R package, its installation under Rstudio can be tricky, but I found out that using <code>installR</code> (an R package used to help updating R) may simplify the process. So the first trick is to use <code>installR</code> to install <code>Rtools</code>:</p>
+<pre class="r"><code>library(installR)
+install.Rtools()</code></pre>
+<p>This is quite a lengthy process, with many windows prompts. I opted for the latest version (3.5) and let the system option by default (install in C:/Rtools/).</p>
+<p><img src="Graphics/RtoolsInstall.JPG" alt="Installing Rtools on Windows" width="300" /> <img src="Graphics/RtoolsInstall2.JPG" alt="Checking add to path" width="300" /> <img src="Graphics/RtoolsInstall3.JPG" alt="Reviewing the system path" width="300" /></p>
+<p>I read carefully the installation messages and checked all the elements that seemed to be useful such as adding rtools to system path. I will come back to that later on.</p>
+<p>The installation went fine, but the instruction:</p>
+<pre class="r"><code>devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>still ended-up with several error messages and a definitive:</p>
+<pre class="r"><code>&#39;Installation failed: Command failed (1)&#39;</code></pre>
+<blockquote>
+<p>… and <em>Rtools</em> does not install smoothly on Windows/Rstudio</p>
+</blockquote>
+<p>This is where a second trick must be used, as I found out very lately. It seems that <a href="https://statbandit.wordpress.com/2017/07/20/quirks-about-running-rcpp-on-windows-through-rstudio/">there is a quirk about running Rcpp (and Rtools) on Windows through RStudio</a>. For whatever reason (you do not want to know), the installation of <code>Rtools</code> on <em>Windows/Rstudio</em> does not add the right path to the working environment. So one must add it manually. For me, with <code>Rtools</code> installed in <code>C:\Rtools</code>, the following line of code worked well:</p>
+<pre class="r"><code>Sys.setenv(PATH = paste(Sys.getenv(&quot;PATH&quot;), &quot;C:/Rtools/bin/&quot;,
+                        &quot;C:/Rtools/mingw_64/bin&quot;, sep = &quot;;&quot;))
+Sys.setenv(BINPREF = &quot;C:/Rtools/mingw_64/bin/&quot;)</code></pre>
+<p>End of the story? Not yet. One must first restart R (restart Rstudio) before running again:</p>
+<pre class="r"><code>devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>and finally get:</p>
+<pre class="r"><code>* DONE (gganimate)
+In R CMD INSTALL</code></pre>
+<p>Now <code>gganimate</code> is working, and I’m beginning to enjoy it, finally. I hope it was worth the trip.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
