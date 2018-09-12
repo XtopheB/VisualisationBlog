@@ -1,0 +1,75 @@
+---
+title: "Everybody's got to cheat sometimes...even me!"
+author: "Xtophe Bontemps"
+date: "2017-09-25"
+output:
+  html_notebook:
+    code_folding: hide
+    fig_caption: yes
+    theme: journal
+---
+
+
+
+<p><em>A post from <a href="http://data.visualisation.free.fr">data.visualisation.free.fr</a></em></p>
+<div id="why-cheating-is-sometimes-useful-in-data-science" class="section level3">
+<h3>Why ``cheating’’ is sometimes useful in data science</h3>
+<p>Recently, I’ve worked on data from a MOOC we have created with some colleagues. The dataset was quite impressive since more than 3000 learners joined the course, viewed or interacted with some ressources (called ``<em>steps</em>‘’), posted comments and pass some tests. One of our goal was to create a data visualisation that alowed us to see the results of the learners’ tests, and, if possible, to detect some pattern in learners’ results over the 5 tests. The data set looks like that:</p>
+<pre><code>##                                learner_id step test_score
+## 1183 c418ddf6-83d1-428b-9e2e-e10f5c2191af 2.12          5
+## 1500 85b54304-389f-4f52-a660-e8fdeee7cf75 2.12          9
+## 1430 d06d07b5-86ac-46b5-9d3f-9ddf4d0eaff6 2.12          7
+## 2012 cf07a530-2a29-45e4-8f0a-44837ffe061a 3.21         10
+## 220  1574c877-7cdb-4758-98ae-ab512ac3d1cc 1.15          8
+## 1384 5e99c2eb-e91b-444d-9027-838408da21b7 2.12          8
+## 1420 ce9333cd-1c2c-49b6-bc99-0077842bebb1 2.12         12
+## 1861 5e7dca65-d6f4-426a-b249-cc5728a65678 3.21          9
+## 1086 bbd30837-2d7d-4c78-9a61-2caa885464c2 1.15         12
+## 727  f865fe15-a265-4dfd-87e1-f5f054c1b57e 1.15          9</code></pre>
+<p>Using that dataset, we wanted to answer some questions:</p>
+<blockquote>
+<p>Are there some visible patterns? Are learners with good results for one test still good at another?</p>
+</blockquote>
+<p>So my first reflex was a plot with all the learners’results over the 5 steps:</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/point-1.png" width="672" /></p>
+<p>Of course, the results to these tests are integers and take only some fixed values from 0 to 12 and many observations are <em>overlapping</em>.</p>
+<blockquote>
+<p>This is a begginers’ mistake!</p>
+</blockquote>
+<p>Well, so my second reflex was to use classical statistical representation such as the good old box-and-whiskers plot (boxplots)! . <img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/box-1.png" width="672" /></p>
+<p>That’s better, and I can see that there is some noticeable difference in the test results. But I wanted to see the individuals performances inside the boxes.</p>
+<blockquote>
+<p>For that I have no choice but <strong>to cheat a little bit …</strong></p>
+</blockquote>
+</div>
+<div id="cheating-a-little-bit-by-adding-some-random-noise" class="section level3">
+<h3>Cheating a little bit by adding some random noise…</h3>
+<p>In order to avoid overlapping, there are 2 basic tricks: * to use <em>transparency</em> (or brushing, or alpha-transparency) * to <em>jitter</em> the data by adding some random component to either the horizontal or vertical component.</p>
+<p>Let us add <strong>transparency</strong> and <strong>horizontal jitter</strong> only.</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/jitter.H-1.png" width="672" /></p>
+<blockquote>
+<p>The points we see now (thanks to <em>jiter</em>) are not the original ones. Is that <em>cheating</em>?</p>
+</blockquote>
+<p>Let us do <strong>transparency</strong> and <strong>vertical jitter</strong>.</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/jitter.V-1.png" width="672" /></p>
+<p>Let us add <strong>transparency</strong> with <strong>horizontal and vertical jitter</strong>.</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/jitter-1.png" width="672" /></p>
+</div>
+<div id="how-cheating-helps-for-ploting-lines-in-parallel-plots" class="section level3">
+<h3>How <em>cheating</em> helps for ploting lines in parallel plots</h3>
+<p>Now, if we want to follow learners results over time (over tests), we can une <em>parallel plots</em> and draw lines linking each result.</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/SpaghettiBrut-1.png" width="672" /></p>
+<p>Since the score range from 1 to 12 and are discrete. many lines overlap and it is quite impossible to see some “pattern” in learners score. Nothing emerges from this simultation.</p>
+<blockquote>
+<p>Let us <em>cheat</em> a little bit</p>
+</blockquote>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/SpaghettiJitter-1.png" width="672" /></p>
+<blockquote>
+<p>Now we see it !</p>
+</blockquote>
+<p>The difference between the two graph is quite striking. By adding some vertical noise on the Y axis - that is modifying randomly the score value so that it is not integer any more - and using some <em>brushing</em> , help revealing some unseen and unnoticed patterns.</p>
+<p>We can also add some colour to follow individuals over those</p>
+<p><img src="/post/Everybody-got-to-cheat-sometimes-even-me_files/figure-html/SpaghettiColour-1.png" width="672" /></p>
+<hr />
+<p><em>Done in Toulouse (France), by <a href="mailto:Xtophe.Bontemps@free.fr">Xtophe</a>. Usual citation policy and disclaimer apply. Comments on my <a href="https://twitter.com/Xtophe_Bontemps">twitter account</a> are welcome</em></p>
+</div>

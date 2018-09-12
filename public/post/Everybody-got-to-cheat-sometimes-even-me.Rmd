@@ -1,0 +1,293 @@
+---
+title: "Everybody's got to cheat sometimes...even me!"
+author: "Xtophe Bontemps"
+date: "2017-09-25"
+output:
+  html_notebook:
+    code_folding: hide
+    fig_caption: yes
+    theme: journal
+---
+
+*A post from [data.visualisation.free.fr](http://data.visualisation.free.fr)*
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r packages, message =FALSE,results='hide'}
+library(ggplot2)
+library(ggthemes)
+#library(doBy)
+library(lubridate)
+library(dplyr)
+library(xtable)
+library(readr)
+library(reshape2)
+library(ggthemes)
+
+```
+
+```{r data-processing, results='hide', echo=FALSE}
+###### --- General ---- 
+Myroot <- "c:/Chris/Cours2016/MOOC/"
+#Myroot <- "F:/ZChris/Cours2016/MOOC/"
+
+##### ----- USER Defined Course info----
+# Course info
+coursetitle <- "pricing-strategy-revenue-management"
+courserun <- 1
+courseSlug <- paste("pricing-strategy-revenue-management-",courserun, sep="")
+courseStartDate <- as.Date("2017-01-16")
+
+## Importing data
+
+questionResponse <- read_csv(paste(Myroot,"DataReport-",courserun,"/data/", courseSlug, "_question-response.csv", sep=""), col_types = list(
+  quiz_question = col_character(),
+  response = col_character(),
+  correct = col_character()
+))
+
+## ----Quizz and Test
+quizbylearner <- questionResponse %>%
+   group_by(learner_id) %>%
+  summarise (
+    nb_quiz= n_distinct(quiz_question)
+      )
+
+ SuccessbylearnerQuizz <- questionResponse %>%
+  group_by(learner_id, quiz_question) %>% 
+   summarize(
+     attempts = n(),
+     correct = sum(correct=="true"),
+     score = abs(attempts-4)
+   )%>%
+   ungroup()
+   
+QuizzAnalysis <- merge(SuccessbylearnerQuizz , quizbylearner, by.x="learner_id")
+ 
+QuizzAnalysis <- QuizzAnalysis %>% 
+  group_by(learner_id) %>%
+  mutate( 
+      totalscore = sum(score),
+      averagescore = totalscore/nb_quiz
+              )
+
+##-----TEST ANALYSIS ----####
+
+# The Steps for our TEST are 1.15, 2.12, 3.21 , 4.4 and 4.10 !!!
+TestAnalysis <-  mutate (SuccessbylearnerQuizz, step=substr(SuccessbylearnerQuizz$quiz_question, 1,4))%>%
+  filter(step == "1.15" | step == "2.12"| step == "3.21"| step == "4.4."| step == "4.10" )%>%
+  group_by(learner_id)  %>%
+  mutate( nb_test = n_distinct(step) ) %>%
+  group_by(learner_id, step) %>%
+  mutate( test_score = sum(score)
+                        )
+
+#main source for test analysis (score for each learner, each test)
+Scorebylearners <-  TestAnalysis %>%
+  select(learner_id, step, nb_test, test_score )
+Scorebylearners <-unique(Scorebylearners)  
+
+#Nb of learners attendig the tests
+LearnersbyTest <-  mutate (questionResponse, step=substr(questionResponse$quiz_question, 1,4))%>%
+  filter(step == "1.15" | step == "2.12"| step == "3.21"| step == "4.4."| step == "4.10" )%>%
+  group_by(step ) %>%
+  summarize(
+            Nb = n_distinct(learner_id)
+  ) %>%
+  ungroup()
+
+#We add information on nb of leraners for each step
+Scorebylearners <- merge(Scorebylearners, LearnersbyTest, by="step")
+```
+
+
+### Why ``cheating'' is sometimes useful in data science
+
+Recently, I've worked on data from a MOOC we have created with some colleagues. The dataset was quite impressive since more than 3000 learners joined the course, viewed or interacted with some ressources (called ``*steps*''),  posted comments and pass some tests. One of our goal was to create a data visualisation that alowed us to see the results of the learners' tests, and, if possible, to detect some pattern in learners' results over the 5 tests. The data set looks like that:
+
+
+```{r}
+sample_n(select(Scorebylearners, learner_id, step, test_score), 10)
+```
+
+
+Using that dataset, we wanted to answer some questions:   
+
+> Are  there some visible patterns? Are learners with good results for one test still good at another?  
+
+So my first reflex was a plot with all the learners'results over the 5 steps:  
+
+```{r point}
+Plot.Point <- ggplot(Scorebylearners, aes(x=step, y= test_score)) + 
+  geom_point(color = "grey", alpha=0.80) +
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Learners' score for each test ", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+
+Plot.Point
+```
+
+
+Of course, the results to these tests are integers and take only some fixed values from 0 to 12 and many observations are *overlapping*.  
+
+> This is a begginers' mistake! 
+
+Well, so my second reflex was to use classical statistical representation such as the good old box-and-whiskers plot (boxplots)!  . 
+```{r box }
+Plot.Box <-  ggplot(Scorebylearners, aes(x=step, y= test_score)) + 
+  geom_boxplot(outlier.colour= "grey", color= "darkgrey", fill="grey") + 
+  guides(colour=FALSE, fill=FALSE)+
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Distribution of learners' score for each test (Box plot)", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+
+Plot.Box
+```
+
+That's better, and I can see that there is some noticeable difference in the test results. 
+But I wanted to see the individuals performances inside the boxes. 
+
+
+> For that I have no choice but **to cheat a little bit ...**
+
+### Cheating a little bit by adding some random noise...
+
+In order to avoid overlapping, there are 2 basic tricks:
+* to use *transparency* (or brushing, or alpha-transparency)
+* to *jitter* the data by adding some random component to either the horizontal or vertical component. 
+
+Let us add **transparency** and **horizontal jitter** only. 
+
+  
+```{r jitter.H }
+Plot.Jitter.H <- ggplot(Scorebylearners, aes(x=step, y= test_score)) + 
+  geom_jitter(color = "grey", alpha=0.20, width=0.20, height = 0) +
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Learners' score for each test (horizontal jitter)", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+Plot.Jitter.H
+```
+
+> The points we see now (thanks to *jiter*) are not the original ones. Is that *cheating*?  
+
+Let us do **transparency** and **vertical jitter**. 
+
+  
+```{r jitter.V, echo=FALSE, , results="hide"}
+Plot.Jitter.V <- ggplot(Scorebylearners, aes(x=step, y= test_score)) + 
+  geom_jitter(color = "grey", alpha=0.10, width=0, height = 0.20) +
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Learners' score for each test (vertical jitter)", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+Plot.Jitter.V
+
+```
+
+
+Let us add **transparency** with  **horizontal and vertical jitter**. 
+
+  
+```{r jitter,  results="hide"}
+Plot.Jitter <- ggplot(Scorebylearners, aes(x=step, y= test_score)) + 
+  geom_jitter(color = "grey", alpha=0.60, width=0.40) +
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Learners' score for each test (Horizontal + vertical jitter)", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+Plot.Jitter
+
+```
+
+### How *cheating*  helps for ploting lines in  parallel plots 
+
+Now, if we want to follow learners results over time (over tests), we  can une *parallel plots* and draw lines linking each result.  
+
+```{r SpaghettiBrut, results="hide"}
+#Spaghetti plot original 
+Plot.spaghetti <-  ggplot(Scorebylearners, 
+                          aes(x=step, y= test_score,
+                              group=factor(learner_id))) +
+  guides(colour=FALSE) + 
+  scale_x_discrete(name="Test step number", limits=c("1.15", "2.12", "3.21" , "4.4.", "4.10")) +
+  scale_y_discrete(name ="Score",  limits=c(0,3,6,9, 12)) +
+  labs(title = "Learners' score for each test  (Parallel plot)", 
+       subtitle = paste("N=", nrow(Scorebylearners), "learners - ", nrow(TestAnalysis),"observations"),
+       caption = "Source: MOOC ``Manage your prices'', FutureLearn (2017)"
+       ) +
+  coord_cartesian(ylim = c(0,12)) +
+  theme_tufte()
+ 
+#Plot Spaghetti brut
+Plot.spaghetti + 
+  geom_line( color="grey", size=1) +
+  theme_tufte()
+
+
+```
+
+Since the score range from 1 to 12 and are discrete. many lines overlap and it is quite impossible to see some "pattern" in learners score. Nothing emerges from this simultation. 
+
+> Let us *cheat* a little bit 
+
+```{r SpaghettiJitter,  results="hide"}
+#Adding jitter on Ys, and alpha-brushing 
+Plot.spaghetti + 
+  geom_line(alpha=0.30, color="grey", size=1, 
+            aes(y = jitter(test_score, 2), x = step , group=factor(learner_id))) + 
+  theme_tufte()
+
+
+```
+
+> Now we see it !
+
+The difference between the two graph is quite striking. By adding some vertical noise on the Y axis - that is modifying randomly the  score value so that it is not integer any more - and using some *brushing* , help revealing some unseen and unnoticed patterns.  
+
+We can also add some colour to follow individuals over those 
+
+
+```{r SpaghettiColour,  results="hide"}
+#
+Plot.spaghetti + 
+  geom_line(alpha=0.10, color=rainbow(nrow(Scorebylearners)), size=1.5, 
+            aes(y = jitter(test_score, 2), x = step , group=factor(learner_id))) + 
+  theme_tufte()
+
+
+
+```
+
+
+
+
+
+***
+*Done in Toulouse (France), by [Xtophe](mailto:Xtophe.Bontemps@free.fr). Usual citation policy and disclaimer apply. Comments on my [twitter account](https://twitter.com/Xtophe_Bontemps) are welcome* 
+
+
