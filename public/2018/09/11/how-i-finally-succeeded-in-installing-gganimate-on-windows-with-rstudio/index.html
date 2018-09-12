@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="How I finally succeeded in installing *gganimate* on Windows with Rstudio" />
+<meta property="og:description" content="A post from data.visualisation.free.fr
+Installing gganimate, a piece of cake…
+gganimate is an appealing package I really wanted to try, but for that I needed first to install it on my windows machine. That was not easy but here is the successful (but time consuming) story of this installation. gganimate is NOT available on CRAN yet but can be installed, as many developers’ packages using devtools pointing to the GitHub repository of thomasp85 (alias Thomas Lin Pedersen)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/2018/09/11/how-i-finally-succeeded-in-installing-gganimate-on-windows-with-rstudio/" /><meta property="article:published_time" content="2018-09-11T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2018-09-11T00:00:00&#43;00:00"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="How I finally succeeded in installing *gganimate* on Windows with Rstudio"/>
+<meta name="twitter:description" content="A post from data.visualisation.free.fr
+Installing gganimate, a piece of cake…
+gganimate is an appealing package I really wanted to try, but for that I needed first to install it on my windows machine. That was not easy but here is the successful (but time consuming) story of this installation. gganimate is NOT available on CRAN yet but can be installed, as many developers’ packages using devtools pointing to the GitHub repository of thomasp85 (alias Thomas Lin Pedersen)."/>
+
+
+
+    <link rel="canonical" href="/2018/09/11/how-i-finally-succeeded-in-installing-gganimate-on-windows-with-rstudio/">
+
+    <title>
+      
+        How I finally succeeded in installing *gganimate* on Windows with Rstudio | Xtophe&#39;s blog
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <link href="/css/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      <header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Xtophe&#39;s blog
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/about/">About</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="http://data.visualisation.free.fr/">DataVisualisation Site</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="https://twitter.com/Xtophe_Bontemps">Twitter</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+        <a class="text-dark" href="/2018/09/11/how-i-finally-succeeded-in-installing-gganimate-on-windows-with-rstudio/">How I finally succeeded in installing <em>gganimate</em> on Windows with Rstudio</a>
+    </h2>
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        Sep 11, 2018
+    
+    
+        by <span rel="author">Xtophe Bontemps</span>
+    
+</div>
+
+    
+    
+    <hr>
+</header>
+<article class="blog-post">
+    <p><em>A post from <a href="http://data.visualisation.free.fr">data.visualisation.free.fr</a></em></p>
+<blockquote>
+<p>Installing <em>gganimate</em>, a piece of cake…</p>
+</blockquote>
+<p><code>gganimate</code> is an appealing package I really wanted to try, but for that I needed first to install it on my windows machine. That was not easy but here is the successful (but time consuming) story of this installation. <code>gganimate</code> is <strong>NOT</strong> available on CRAN yet but can be installed, as many developers’ packages using <em>devtools</em> pointing to the GitHub repository of <a href="https://github.com/thomasp85">thomasp85</a> (alias Thomas Lin Pedersen). For the occasion, I first updated R to the current (3.5.1) version. The instruction for installing <code>gganimate</code> as read on thomasp85’s <a href="https://github.com/thomasp85/gganimate#installation">readme.md</a> is:</p>
+<pre class="r"><code># install.packages(&#39;devtools&#39;)
+devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>My post would have been short and uninteresting if that simple instruction was successful. After several dependency package installation, I get the following quite unambiguous message:</p>
+<pre class="r"><code>* removing &#39;C:/Users/Xtophe/Documents/R/win-library/3.5/gganimate&#39;
+In R CMD INSTALL
+&#39;Installation failed: Command failed (1)&#39;</code></pre>
+<p>I will go directly to the solution, avoiding the reader to follow my time-consuming, nerve-streching tribulations on the web. The one thing that was missing was <code>Rtools</code>, which is not an R package but a utility required to build R packages, and <code>gganimate</code> needs that.</p>
+<blockquote>
+<p><em>gganimate</em> needs <em>Rtools</em> for its installation…</p>
+</blockquote>
+<p>Since <code>Rtools</code> is <strong>NOT</strong> an R package, its installation under Rstudio can be tricky, but I found out that using <code>installR</code> (an R package used to help updating R) may simplify the process. So the first trick is to use <code>installR</code> to install <code>Rtools</code>:</p>
+<pre class="r"><code>library(installR)
+install.Rtools()</code></pre>
+<p>This is quite a lengthy process, with many windows prompts. I opted for the latest version (3.5) and let the system option by default (install in C:/Rtools/).</p>
+<p><img src="Graphics/RtoolsInstall.JPG" alt="Installing Rtools on Windows" width="300" /> <img src="Graphics/RtoolsInstall2.JPG" alt="Checking add to path" width="300" /> <img src="Graphics/RtoolsInstall3.JPG" alt="Reviewing the system path" width="300" /></p>
+<p>I read carefully the installation messages and checked all the elements that seemed to be useful such as adding rtools to system path. I will come back to that later on.</p>
+<p>The installation went fine, but the instruction:</p>
+<pre class="r"><code>devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>still ended-up with several error messages and a definitive:</p>
+<pre class="r"><code>&#39;Installation failed: Command failed (1)&#39;</code></pre>
+<blockquote>
+<p>… and <em>Rtools</em> does not install smoothly on Windows/Rstudio</p>
+</blockquote>
+<p>This is where a second trick must be used, as I found out very lately. It seems that <a href="https://statbandit.wordpress.com/2017/07/20/quirks-about-running-rcpp-on-windows-through-rstudio/">there is a quirk about running Rcpp (and Rtools) on Windows through RStudio</a>. For whatever reason (you do not want to know), the installation of <code>Rtools</code> on <em>Windows/Rstudio</em> does not add the right path to the working environment. So one must add it manually. For me, with <code>Rtools</code> installed in <code>C:\Rtools</code>, the following line of code worked well:</p>
+<pre class="r"><code>Sys.setenv(PATH = paste(Sys.getenv(&quot;PATH&quot;), &quot;C:/Rtools/bin/&quot;,
+                        &quot;C:/Rtools/mingw_64/bin&quot;, sep = &quot;;&quot;))
+Sys.setenv(BINPREF = &quot;C:/Rtools/mingw_64/bin/&quot;)</code></pre>
+<p>End of the story? Not yet. One must first restart R (restart Rstudio) before running again:</p>
+<pre class="r"><code>devtools::install_github(&#39;thomasp85/gganimate&#39;)</code></pre>
+<p>and finally get:</p>
+<pre class="r"><code>* DONE (gganimate)
+In R CMD INSTALL</code></pre>
+<p>Now <code>gganimate</code> is working, and I’m beginning to enjoy it, finally. I hope it was worth the trip.</p>
+
+
+    
+
+    
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/2018/09/11/how-i-finally-succeeded-in-installing-gganimate-on-windows-with-rstudio/">How I finally succeeded in installing <em>gganimate</em> on Windows with Rstudio</a>
+        </li>
+        
+        <li>
+            <a href="/2018/09/11/test/">Test</a>
+        </li>
+        
+        <li>
+            <a href="/2017/09/25/everybodys-got-to-cheat-sometimes...even-me/">Everybody&rsquo;s got to cheat sometimes&hellip;even me!</a>
+        </li>
+        
+        <li>
+            <a href="/2017/03/11/why-you-should-never-use-radar-plots/">Why you should never use radar plots</a>
+        </li>
+        
+        <li>
+            <a href="/2016/12/30/a-plain-markdown-post/">A Plain Markdown Post</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/categories/r">r</a>
+            
+            <a class="badge badge-primary" href="/categories/thoughts">thoughts</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/tags/data-visualisation">data-visualisation</a>
+            
+            <a class="badge badge-primary" href="/tags/plot">plot</a>
+            
+            <a class="badge badge-primary" href="/tags/r-markdown">r-markdown</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+<footer class="blog-footer w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  </body>
+</html>
