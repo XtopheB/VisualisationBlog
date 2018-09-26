@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Why you should never use radar plots " />
+<meta property="og:description" content="A post from data.visualisation.free.fr
+What is radar plot?Radar plots or charts, also called Spider or Web charts are very popular tools for representing individuals scores of brands, firms, NBA players recorded or evaluated for different variables, different activities or dimensions.
+A radar plot is a sort parallel coordinates plot but using polar coordinates. The axis start from the center of the view and diverge from there to form equi-angular spoke." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/why-you-should-never-use-radar-plots/" /><meta property="article:published_time" content="2017-03-11T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2017-03-11T00:00:00&#43;00:00"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Why you should never use radar plots "/>
+<meta name="twitter:description" content="A post from data.visualisation.free.fr
+What is radar plot?Radar plots or charts, also called Spider or Web charts are very popular tools for representing individuals scores of brands, firms, NBA players recorded or evaluated for different variables, different activities or dimensions.
+A radar plot is a sort parallel coordinates plot but using polar coordinates. The axis start from the center of the view and diverge from there to form equi-angular spoke."/>
+
+
+
+    <link rel="canonical" href="/post/why-you-should-never-use-radar-plots/">
+
+    <title>
+      
+        Why you should never use radar plots  | My New Hugo Site
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <link href="/css/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      <header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            My New Hugo Site
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+        <a class="text-dark" href="/post/why-you-should-never-use-radar-plots/">Why you should never use radar plots</a>
+    </h2>
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        Mar 11, 2017
+    
+    
+        by <span rel="author">Xtophe Bontemps</span>
+    
+</div>
+
+    
+    
+    <hr>
+</header>
+<article class="blog-post">
+    <p><em>A post from <a href="http://data.visualisation.free.fr">data.visualisation.free.fr</a></em></p>
+<div id="what-is-radar-plot" class="section level3">
+<h3>What is <em>radar plot</em>?</h3>
+<p><em>Radar plots</em> or <em>charts</em>, also called <em>Spider</em> or <em>Web charts</em> are very popular tools for representing individuals scores of brands, firms, NBA players recorded or evaluated for different variables, different activities or dimensions.</p>
+<p>A radar plot is a sort <strong>parallel coordinates</strong> plot but using polar coordinates. The axis start from the center of the view and diverge from there to form equi-angular spoke. Each observation (individual) is represented by a line connecting values on each spoke (axis). The global performance is visualized by the total area delimited by the line. People use these representation to compare performances attributed to individuals in a multidimensional space (the categories).</p>
+<p>Let’s take the example of <em>Thom, Johnny, Colin</em> and <em>Ed</em> who have been graded in 4 categories (<strong>A, B, C</strong> and <strong>D</strong>). We may think of musician with different skills regarding <strong>A</strong>ccoustic guitar, <strong>B</strong>ass, <strong>C</strong>horus and <strong>D</strong>rums. The data looks like this:</p>
+<pre class="r"><code>library (fmsb)       # Used here for radar plots
+library(ggplot2)     # Modern plotting in R
+library(ggthemes)    # I like to have plotting themes (such as &quot;classic&quot;&quot;, or &quot;Tufte&#39;&quot;)
+library(dplyr)       # For easy data management</code></pre>
+<pre><code>## 
+## Attachement du package : &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>Thom = c(5,1,4,2)
+Johnny = c(5,4,2,1)
+Colin = c(2,2,3,4)
+Ed =  c( 4,3,2,1)
+
+Radio.Table &lt;- rbind(Thom,Johnny, Colin, Ed)  
+Radio.Table &lt;- as.data.frame(Radio.Table)
+
+colnames(Radio.Table) = list(&quot;A&quot;,&quot;B&quot;, &quot;C&quot;, &quot;D&quot;)
+rownames(Radio.Table) = list(&quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)</code></pre>
+<pre><code>##        A B C D
+## Thom   5 1 4 2
+## Johnny 5 4 2 1
+## Colin  2 2 3 4
+## Ed     4 3 2 1</code></pre>
+<pre class="r"><code>#First two rows must show max-min
+# Min.R &lt;- apply(Radio.Table,2,min)
+# Max.R &lt;- apply(Radio.Table,2,max)
+
+#Or decide of a fixed scale (max= 5, min=0)
+Min.R &lt;- rep(0,4)
+Max.R &lt;- rep(5,4)
+
+#Add 2 first rows 
+Radio.Table.Radar &lt;- rbind(Max.R, Min.R,Radio.Table)
+    
+colnames(Radio.Table.Radar) = list(&quot;A&quot;,&quot;B&quot;, &quot;C&quot;, &quot;D&quot;)
+rownames(Radio.Table.Radar) = list(&quot;max&quot; , &quot;min&quot;, &quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)</code></pre>
+</div>
+<div id="standard-overlaid-radar-plot" class="section level3">
+<h3>Standard overlaid radar plot</h3>
+<p>Now, let us compare these guys using a Radar Plot (<em>thanks to Christophe Regouby for his trick on zero axis</em>).</p>
+<pre class="r"><code>#I like to choose my colors!
+#library(wesanderson)
+#Mycol &lt;-wes_palette(n=4, name=&quot;Darjeeling&quot;)
+
+library(RColorBrewer)
+Mycol &lt;-brewer.pal(n = 4, name = &quot;Set2&quot;)
+
+#thanks to Christophe Regouby for his trick on centering to zero!
+radarchart(Radio.Table.Radar, 
+           axistype=0, pty=32, plty=1,  plwd=2, axislabcol=&quot;grey&quot;, na.itp=FALSE,
+           pcol=Mycol,
+           cglty = 3, cglwd = 2, cglcol = &quot;grey&quot;, 
+           centerzero=TRUE ,
+ title=&quot;Scores of Thom, Johnny, Colin and Ed &quot;)</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-4-1.png" width="672" /> ### Small multiples are more usefull The overlapping of the curves on this graphic does not allow an easy comparison of the scores, so let us split this graph into 4 graphs (using a <em>Small multiple</em> approach), each graph representing the radar plot of a member of the band.</p>
+<pre class="r"><code>par(mar=c(1, 2, 2, 1)) #decrease default margin
+layout(matrix(1:4, ncol=2)) #draw 4 plots to device
+#loop over rows to draw them, add 1 as max and 0 as min for each var
+lapply(1:4, function(i) { 
+    radarchart(rbind(Max.R, Min.R, Radio.Table[i,]), 
+               seg=4, 
+               axistype=0, pty=32, plty=1, axislabcol=&quot;grey&quot;, na.itp=FALSE,
+               cglty = 3, cglwd = 1, cglcol = &quot;grey&quot;, 
+               pcol= Mycol[i],
+               pdensity=50, pfcol=Mycol[i],
+                centerzero=TRUE ,
+               title= paste(&quot;Score of&quot;, rownames(Radio.Table[i,]),&quot;&quot;))
+  })</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="the-radar-plot-does-not-represent-truthfully-the-data" class="section level3">
+<h3>The Radar plot does not represent truthfully the data</h3>
+<p>Let us compute the area of the radar plot for each of the 4 guys here. Since we only have 4 categories here, the area is very simple. It is defined as half the area of the square containing the radar plot, or, denoting by (a, b, c, d) the length of each branch, that is the score for each variable, we have:</p>
+<p><span class="math display">\[area = \frac{(a+c)*(b+d)}{2}\]</span> Another way of finding this result is to compute the area of the 4 triangles (rectangle in 0) forming the radar plot surface.</p>
+<pre class="r"><code>Score.Table &lt;-Radio.Table %&gt;%
+  mutate(
+    score.total = Radio.Table[,&quot;A&quot;]+ Radio.Table[,&quot;B&quot;] + Radio.Table[,&quot;C&quot;]+ Radio.Table[,&quot;D&quot;] ,  
+    area = 0.5*(Radio.Table[,&quot;A&quot;]+ Radio.Table[,&quot;C&quot;])*(Radio.Table[,&quot;B&quot;]+ Radio.Table[,&quot;D&quot;])
+  )
+
+colnames(Score.Table) = list(&quot;A&quot;,&quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;Total&quot;, &quot;area&quot;)
+rownames(Score.Table) = list(&quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)
+
+Score.Table </code></pre>
+<pre><code>##        A B C D Total area
+## Thom   5 1 4 2    12 13.5
+## Johnny 5 4 2 1    12 17.5
+## Colin  2 2 3 4    11 15.0
+## Ed     4 3 2 1    10 12.0</code></pre>
+<p>If we focus on Thom and Johnny, we clearly see that the sum of their scores is identical while there is a big difference in the area representing their scores. There is clearly a <strong>lying factor</strong> here (see <a href="https://www.edwardtufte.com/bboard/q-and-a-fetch-msg?msg_id=00002o">Tufte</a> for a definition of this factor). The ranking of the total scores is not preserved by the graph, since in terms of areas we have the order from best to lowest:</p>
+<ol style="list-style-type: decimal">
+<li>Johnny,</li>
+<li>Colin</li>
+<li>Thom, and</li>
+<li>Ed,</li>
+</ol>
+<p>with a huge difference in the area, not reflecting the real scores differences (only 2 points difference between highest and lowest).</p>
+<pre class="r"><code>Score.Table$Names &lt;- rownames(Score.Table)
+ggplot(data=Score.Table, aes(x= Names, y=area )) + 
+    geom_bar(colour= &quot;white&quot;,  fill = rev(Mycol) , width=.5, stat=&quot;identity&quot;) + 
+    xlab(&quot;Band&quot;) + ylab(&quot;Radar plot area&quot;) +
+    scale_x_discrete(limits=rev(rownames(Score.Table)))+
+    ggtitle(&quot;Radar plot area (order A, B, C, D) &quot;) +
+    coord_flip()</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="impact-of-the-axis-order" class="section level3">
+<h3>Impact of the axis order</h3>
+<p>Now let us redefine the axis and switch <strong>B</strong> and <strong>C</strong> on the radar plot:</p>
+<pre class="r"><code>Radio.Table.New &lt;- Radio.Table[c(&quot;A&quot;, &quot;C&quot;, &quot;B&quot;, &quot;D&quot;)]
+Radio.Table.New</code></pre>
+<pre><code>##        A C B D
+## Thom   5 4 1 2
+## Johnny 5 2 4 1
+## Colin  2 3 2 4
+## Ed     4 2 3 1</code></pre>
+<p>And now let us see who seems to be the best.</p>
+<pre class="r"><code>par(mar=c(1, 2, 2, 1)) #decrease default margin
+layout(matrix(1:4, ncol=2)) #draw 4 plots to device
+#loop over rows to draw them, add 1 as max and 0 as min for each var
+lapply(1:4, function(i) { 
+    radarchart(rbind(Max.R, Min.R, Radio.Table.New[i,]), 
+               seg=5, 
+               axistype=0, pty=32, plty=1, axislabcol=&quot;grey&quot;, na.itp=FALSE,
+               cglty = 3, cglwd = 1, cglcol = &quot;grey&quot;, 
+               pcol= Mycol[i],
+               pdensity=50, pfcol=Mycol[i], 
+               centerzero=TRUE ,
+               title= paste(&quot;Score of&quot;, rownames(Radio.Table.New[i,]),&quot;&quot;))
+  })</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="the-whole-picture-has-changed" class="section level3">
+<h3>The whole picture has changed</h3>
+<p>Now, it seems that the respective areas of each members have changed. Let us recompute the areas.</p>
+<pre class="r"><code>Score.Table.New &lt;-Radio.Table.New %&gt;%
+  mutate(
+    score.total = Radio.Table.New[,&quot;A&quot;]+ Radio.Table.New[,&quot;B&quot;] + Radio.Table.New[,&quot;C&quot;]+ Radio.Table.New[,&quot;D&quot;] ,  
+    area = 0.5*(Radio.Table.New[,&quot;A&quot;]+ Radio.Table.New[,&quot;B&quot;])*(Radio.Table.New[,&quot;C&quot;]+ Radio.Table.New[,&quot;D&quot;])
+  )
+
+colnames(Score.Table.New) = list(&quot;A&quot;,&quot;C&quot;, &quot;B&quot;, &quot;D&quot;, &quot;Total&quot;, &quot;area&quot;)
+rownames(Score.Table.New) = list(&quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)
+
+Score.Table.New</code></pre>
+<pre><code>##        A C B D Total area
+## Thom   5 4 1 2    12 18.0
+## Johnny 5 2 4 1    12 13.5
+## Colin  2 3 2 4    11 14.0
+## Ed     4 2 3 1    10 10.5</code></pre>
+<p>The area representing the scores of Thom has changed from 13.5 to 18, while Johnny’s area has shrunk from <strong>17.5</strong> down to <strong>13.5</strong>. That is less than Colin. Ed is still last. The order has changed with the change of axis, now the ranking is:</p>
+<ol style="list-style-type: decimal">
+<li>Thom</li>
+<li>Colin</li>
+<li>Johnny</li>
+<li>Ed</li>
+</ol>
+<p>Look at the new values of radar plot areas</p>
+<pre class="r"><code>#NB: I have to reverse colors because of coord_flip
+Score.Table.New$Names &lt;- rownames(Score.Table.New)
+ggplot(data=Score.Table.New, aes(x= Names, y=area, fill=Names )) + 
+    geom_bar(colour= &quot;white&quot;, fill=rev(Mycol), width=.5, stat=&quot;identity&quot;) +
+    scale_x_discrete(limits=rev(rownames(Score.Table)))+
+    xlab(&quot;Band&quot;) + ylab(&quot;Radar plot area&quot;) +
+    ggtitle(&quot;Radar plot area with the new axis order (A, C, B, D) &quot;) +
+    coord_flip()</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="an-alternative-parallel-coordinate-plot" class="section level3">
+<h3>An alternative: Parallel Coordinate Plot</h3>
+<p>We may use a different type of graph to have a better view of this difficult case. One example is the <em>Parallel Coordinate Plot</em> proposed in the <em>MASS</em> library in R. Radar plot and Parallel Coordinate Plot are quite similar in spirit. The advantage of the latter lies in its simplicity and in the absence of artificial area representation spoiling the perception of the global performance. Contrary to the radar plot, the comparison of each individual is done <em>on vertical axis</em>, the connecting lines showing some evolution of the scores from on axis to the other. So, here again, the order of the axis may change the view, and can help detect patterns, but <strong>will not affect the comparison</strong>.</p>
+<p>Note that this standard graph propose <strong>different scales for each axis</strong>, ranging from min to max. In our case, the second axis (“B”) has a maximum of 4, while the first ranges from 1 to 5. So, the global comparison is still far from obvious.</p>
+</div>
+<div id="so-who-is-the-best" class="section level3">
+<h3>So who is the best?</h3>
+<p>We see that the orange line (<em>Johnny</em>) <strong>strictly dominates</strong> the pink line (<em>Ed</em>). This something easy to see in the table, whatever the ranking of columns, <em>Johnny</em> has always a score greater than <em>Ed</em>. We couldn’t easily see that striking result in the radar plot.</p>
+<p>The blue (<em>Colin</em>) and orange (<em>Johnny</em>) lines have opposite results. We also see that it is difficult to compare the green (<em>Thom</em>) and orange (<em>Johnny</em>) lines, since the corresponding band members <strong>have exactly the same scores</strong>, but not for the same variables. Contrary to what the radar plot showed, none is globally better. That’s also a result clearly emphasized by this (imperfect) graph.</p>
+<pre class="r"><code>parcoord(Radio.Table[1:4,], col=Mycol, lwd=3, var.label=TRUE)</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-13-1.png" width="672" /> &gt;Or even Better, we could use <em>small multiples</em></p>
+<pre class="r"><code>toto &lt;- c(6,6,6,6)
+Radio.Table2 &lt;- rbind(Radio.Table, toto)
+par(mfrow=c(2,2))
+parcoord(Radio.Table[c(1,3),], col=c(Mycol[1], &quot;white&quot;), lwd=3, var.label=TRUE)
+parcoord(Radio.Table[2:3,], col=c(Mycol[2], &quot;white&quot;), lwd=3, var.label=TRUE)
+parcoord(Radio.Table[3:4,], col=c(Mycol[3], &quot;white&quot;), lwd=3, var.label=TRUE)
+parcoord(Radio.Table[3:4,], col=c(&quot;white&quot;, Mycol[4]), lwd=3, var.label=TRUE)</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="conclusion-comparison-is-still-difficult" class="section level3">
+<h3>Conclusion: Comparison is still difficult…</h3>
+<p>But we have a more faithful comparison of the 4 guys here, and we do not rely on false global measure implicitly over- or under-representing the values used for comparison.</p>
+<p>That’s why I suggest to <strong>avoid using radar plots</strong>!</p>
+<!-- ```{r} -->
+<!-- #Alternative way of plotting using ggplot -->
+<!-- library(GGally) -->
+<!-- ggparcoord(data = Radio.Table, columns = 1:4, scale = "globalminmax") -->
+<!-- ``` -->
+<hr />
+</div>
+<div id="even-more-missleading-same-example-with-5-axis" class="section level2">
+<h2>Even more missleading: Same example with 5 axis</h2>
+<p>We can redo the example of Thom, Johnny, Colin and Ed who have been graded now in 5 categories (A, B, C, D and E). The data are exactly the same, except that we gave a score of 2 for a fifth variable.</p>
+<pre class="r"><code>library (fmsb)
+library(ggplot2)
+library(ggthemes)
+
+Thom = c(5,1,4,2, 2)
+Johnny = c(5,4,2,1,2)
+Colin = c(2,2,3,4,2)
+Ed =  c( 4,3,2,1,2)
+
+Radio.Table5 &lt;- rbind(Thom,Johnny, Colin, Ed)  
+Radio.Table5 &lt;- as.data.frame(Radio.Table5)
+
+colnames(Radio.Table5) = list(&quot;A&quot;,&quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;)
+rownames(Radio.Table5) = list(&quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)
+
+#show table
+Radio.Table5</code></pre>
+<pre><code>##        A B C D E
+## Thom   5 1 4 2 2
+## Johnny 5 4 2 1 2
+## Colin  2 2 3 4 2
+## Ed     4 3 2 1 2</code></pre>
+<pre class="r"><code>#First two rows must show max-min
+# Min.R &lt;- apply(Radio.Table5,2,min)
+# Max.R &lt;- apply(Radio.Table5,2,max)
+
+#Or decide of a fixed scale (max= 5, min=0)
+Min.R &lt;- rep(0,5)
+Max.R &lt;- rep(5,5)
+
+#Add 2 first rows 
+Radio.Table5 &lt;- rbind(Max.R, Min.R,Radio.Table5)
+    
+colnames(Radio.Table5) = list(&quot;A&quot;,&quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;)
+rownames(Radio.Table5) = list(&quot;max&quot; , &quot;min&quot;, &quot;Thom&quot;,&quot;Johnny&quot; , &quot;Colin&quot;, &quot;Ed&quot;)</code></pre>
+<p>Again, comparing the performance of these guys using a Radar Plot provides a very biased visual comparison, since the areas do not reflect the overall scores.</p>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre class="r"><code>par(mar=c(1, 2, 2, 1)) #decrease default margin
+layout(matrix(1:4, ncol=2)) #draw 4 plots to device
+#loop over rows to draw them, add 1 as max and 0 as min for each var
+lapply(1:4, function(i) { 
+    radarchart(rbind(Max.R, Min.R, Radio.Table5[i+2,]), 
+               seg=5, 
+               axistype=0, pty=32, plty=1, axislabcol=&quot;grey&quot;, na.itp=FALSE,
+               cglty = 3, cglwd = 1, cglcol = &quot;grey&quot;, 
+               pcol= Mycol[i],
+               pdensity =50, pfcol=Mycol[i], 
+                centerzero=TRUE ,
+               title= paste(&quot;Score of&quot;, rownames(Radio.Table5[i+2,]),&quot;&quot;))
+  })</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Now let us redefine the axis so that axis B and D do not have the position on the radar plot:</p>
+<pre class="r"><code>Radio.Table5.New &lt;- Radio.Table5[c(&quot;A&quot;, &quot;D&quot;, &quot;C&quot;, &quot;B&quot;, &quot;E&quot;)]
+Radio.Table5.New[3:6,]</code></pre>
+<pre><code>##        A D C B E
+## Thom   5 2 4 1 2
+## Johnny 5 1 2 4 2
+## Colin  2 4 3 2 2
+## Ed     4 1 2 3 2</code></pre>
+<p>And now let us see who seems to be the best.</p>
+<pre class="r"><code>par(mar=c(1, 2, 2, 1)) #decrease default margin
+layout(matrix(1:4, ncol=2)) #draw 4 plots to device
+#loop over rows to draw them, add 1 as max and 0 as min for each var
+lapply(1:4, function(i) { 
+    radarchart(rbind(Max.R, Min.R, Radio.Table5.New[i+2,]), 
+               seg=5, 
+               axistype=0, pty=32, plty=1, axislabcol=&quot;grey&quot;, na.itp=FALSE,
+               cglty = 3, cglwd = 1, cglcol = &quot;grey&quot;, 
+               pcol= Mycol[i],
+               pdensity =50, pfcol=Mycol[i], 
+                centerzero=TRUE ,
+               title= paste(&quot;Score of&quot;, rownames(Radio.Table5.New[i+2,]),&quot;&quot;))
+  })</code></pre>
+<p><img src="/post/Why-you-should-never-use-radar-plots_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>So, ordering the members on the basis of these plots, comparing multidimensional scores, remains a very difficult task. The radar plot certainly does not help.</p>
+<hr />
+<p><em>Done in Toulouse (France), by <a href="mailto:Xtophe.Bontemps@free.fr">Xtophe</a>. Usual citation policy and disclaimer apply. Comments on my <a href="https://twitter.com/Xtophe_Bontemps">twitter account</a> are welcome</em></p>
+<!-- ```{r} -->
+<!-- library(MASS) -->
+<!-- parcoord(Radio.Table5[3:6,], col=c(1, 2, 3, 4), lwd=3, var.label=TRUE) -->
+<!-- ``` -->
+</div>
+
+
+    
+
+    
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/post/how-i-finally-succeeded-in-installing-gganimate-on-windows-with-rstudio/">How I finally succeeded in installing <em>gganimate</em> on Windows with Rstudio</a>
+        </li>
+        
+        <li>
+            <a href="/post/test/">Test</a>
+        </li>
+        
+        <li>
+            <a href="/post/everybody-got-to-cheat-sometimes-even-me/">Everybody&rsquo;s got to cheat sometimes&hellip;even me!</a>
+        </li>
+        
+        <li>
+            <a href="/post/why-you-should-never-use-radar-plots/">Why you should never use radar plots</a>
+        </li>
+        
+        <li>
+            <a href="/post/2016-12-30-hello-markdown/">A Plain Markdown Post</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/categories/r">r</a>
+            
+            <a class="badge badge-primary" href="/categories/thoughts">thoughts</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/tags/data-visualisation">data-visualisation</a>
+            
+            <a class="badge badge-primary" href="/tags/plot">plot</a>
+            
+            <a class="badge badge-primary" href="/tags/r-markdown">r-markdown</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+<footer class="blog-footer w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  </body>
+</html>
