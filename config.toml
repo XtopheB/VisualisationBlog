@@ -1,11 +1,11 @@
 baseurl = "https://XtopheB.github.io/"
 languageCode = "en-us"
 title = "Xtophe's blog"
-theme = "hugo-lithium"
+theme = "hugo-bootstrap-master"
 googleAnalytics = ""
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
-publishDir = "XtopheB.github.io"
+#publishDir = "Docs"
 
 [permalinks]
     post = "/:year/:month/:day/:slug/"
