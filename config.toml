@@ -5,7 +5,7 @@ theme = "hugo-bootstrap-master"
 googleAnalytics = ""
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
-#publishDir = "Docs"
+publishDir = "../XtopheB.github.io"
 
 [permalinks]
     post = "/:year/:month/:day/:slug/"
